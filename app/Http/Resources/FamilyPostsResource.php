@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FriendPostsResource extends JsonResource
+class FamilyPostsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,9 @@ class FriendPostsResource extends JsonResource
     {
         return[
             'id'=>$this->id,
-            'friend_id'=>$this->friend_id,
+            'family_id'=>$this->family_id,
             'post_id'=>$this->post_id,
             'posts'=>postResource::make($this->posts)
-            ];
+        ];
     }
 }

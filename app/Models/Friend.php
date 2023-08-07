@@ -14,7 +14,8 @@ class Friend extends Model
     }
     protected $fillable=['id','user_requested','user_id','stutes'];
     public function posts(){
-        return $this->belongsToMany(Post::class, 'friend_posts', 'friend_id', 'post_id')->withTimestamps();  
+        return $this->belongsToMany(Post::class, 'friend_posts', 'friend_id', 'post_id')
+        ->withTimestamps();  
       }
 
 }

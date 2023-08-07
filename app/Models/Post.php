@@ -27,6 +27,10 @@ class Post extends Model
     public function friends(){
         return $this->belongsToMany(Friend::class, 'friend_posts', 'post_id', 'friend_id')->withTimestamps();  
       }
+
+    public function families(){
+        return $this->belongsToMany(Family::class, 'family_posts', 'post_id', 'family_id')->withTimestamps();
+    }
       public  function getImageAttribute()
     {
         return isset($this->attributes['image']) ? asset($this->attributes['image']) : asset('');

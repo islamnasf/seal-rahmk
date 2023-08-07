@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\azkarController;
 use App\Http\Controllers\api\commentController;
 use App\Http\Controllers\api\doaaController;
+use App\Http\Controllers\api\FamilyController;
 use App\Http\Controllers\api\friendController;
 use App\Http\Controllers\api\hadithController;
 use App\Http\Controllers\api\likeController;
@@ -32,9 +33,10 @@ Route::group(['middleware'=>'api','prefix'=>'auth'],function($router){
 });
 Route::group(['middleware'=>'auth:api'],function($router){
     Route::get('post',[postController::class,'index']);
-    Route::post('post',[postController::class,'storePostFriend']);
+    Route::post('post_friend',[postController::class,'storePostFriend']);
     Route::get('post_friend',[postController::class,'showPostFriend']);
-
+    Route::post('post_family',[postController::class,'storePostFamily']);
+    Route::get('post_family',[postController::class,'showPostFamily']);
     //Route::get('post/{id}',[postController::class,'show']);
     Route::put('post/{id}/edit',[postController::class,'update']);
     Route::delete('post/{id}/delete',[postController::class,'destroy']);
@@ -45,6 +47,8 @@ Route::group(['middleware'=>'auth:api'],function($router){
     Route::post('like_unlike_post/{post_id}',[likeController::class,'store']);
     //friend 
     Route::post('friend',[friendController::class,'store']);
+    //family 
+    Route::post('family',[FamilyController::class,'store']);
     //////////////////////////////////////////
     //azkar
     Route::get('azkar',[azkarController::class,'index']);
@@ -69,5 +73,4 @@ Route::group(['middleware'=>'auth:api'],function($router){
     //searchContent 
     Route::post('advancedSearch',[searchController::class,'advancedSearch']);
     //
-
 });

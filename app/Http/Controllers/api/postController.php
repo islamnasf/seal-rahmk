@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FamilyPostsResource;
 use App\Http\Resources\FriendPostsResource;
 use App\Http\Resources\postResource;
 use App\Models\Family;
@@ -34,7 +35,6 @@ class postController extends Controller
             ],404);
         }
     }   
-
     //post for friend
     public function storePostFriend(Request  $Request){
         try{
@@ -80,60 +80,11 @@ class postController extends Controller
 
         }
     }
-    //show posts friend
-    
-    public function showPostFriend(){
-            $user_id=Auth::user()->id;
-            $friends = Friend::where('user_id',$user_id)
-            ->get();  
-            
-            if($friends->count() > 0){
-                foreach($friends as $friend){
-                $posts= FriendPost::where('friend_id',$friend->id)
-                ->with('posts')
-                ->get();
-                }
-                
-                return response()->json([
-                    'status'=>200,
-                    'posts'=> FriendPostsResource::collection($posts)
-                    //'posts'=> $posts->load('posts')
-                ],200);
-            }else{
-                return response()->json([
-                    'status'=>404,
-                    'message'=> 'No Posts Found '
-                ],404);
-            }   
-    }
-        //show posts friend
-    
-        public function showPostFamily(){
-            $user_id=Auth::user()->id;
-            $friends = Family::where('user_id',$user_id)
-            ->get();  
-            $posts = DB::table('posts')->Select("*")->orderby("id","ASC")
-            ->leftJoin('family_posts','posts.id','=','family_posts.post_id')
-            ->where('family_posts.family_id','=',$friends->id)
-            ->with('comments')->with('likes')->get(); //get() //paginate(2)
-            if($posts ->count() > 0){
-                return response()->json([
-                    'status'=>200,
-                    'posts'=> postResource::collection($posts)
-                ],200);
-            }else{
-                return response()->json([
-                    'status'=>404,
-                    'message'=> 'No Posts Found '
-                ],404);
-            }   
-    }
-  
     //post for family
     public function storePostFamily(Request  $Request){
         try{
             $user_id=Auth::user()->id;
-            $families = Friend::where('user_requested',$user_id)
+            $families = Family::where('user_requested',$user_id)
             ->get(); 
             if($Request->hasFile('image')){
                  $image = $Request->file('image');
@@ -171,18 +122,66 @@ class postController extends Controller
                 'stetus'=>200,
                 'message'=>"Post Created Successfully"
             ],200); 
-
-
         }catch(\Exception $e){
             return response()->json([
                 'stetus'=>422,
                 'message'=>"something went woring"
             ],422);
-
         }
- 
     }
-  
+
+
+    //show posts friend
+    
+    public function showPostFriend(){
+            $user_id=Auth::user()->id;
+            $friends = Friend::where('user_requested',$user_id)
+            ->get();  
+            
+            if($friends->count() > 0){
+                foreach($friends as $friend){
+                $posts= FriendPost::where('friend_id',$friend->id)
+                ->with('posts')
+                ->get();
+                }
+                
+                return response()->json([
+                    'status'=>200,
+                    'posts'=> FriendPostsResource::collection($posts)
+                    //'posts'=> $posts->load('posts')
+                ],200);
+            }else{
+                return response()->json([
+                    'status'=>404,
+                    'message'=> 'No Posts Found '
+                ],404);
+            }   
+    }
+    //show posts for family
+    public function showPostFamily(){
+        $user_id=Auth::user()->id;
+        $families = Family::where('user_requested',$user_id)
+        ->get();  
+        
+        if($families->count() > 0){
+            foreach($families as $family){
+            $posts= FamilyPost::where('family_id',$family->id)
+            ->with('posts')
+            ->get();
+            }
+            return response()->json([
+                'status'=>200,
+                'posts'=> FamilyPostsResource::collection($posts)
+                //'posts'=> $posts->load('posts')
+            ],200);
+        }else{
+            return response()->json([
+                'status'=>404,
+                'message'=> 'No Posts Found '
+            ],404);
+        }   
+}
+        
     public function update(Request $Request , int $post){
         $user_id=Auth::user()->id;
        // $posts = Post::find($post);

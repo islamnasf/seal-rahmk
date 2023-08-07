@@ -14,6 +14,12 @@ class FamilyController extends Controller
         $family = Family::where('user_requested',$user_requested)
         ->where('user_id',$Request->user_id)
         ->first(); 
+        if($user_requested==$Request->user_id){
+            return response()->json([
+                'stetus'=>422,
+                'message'=>"something went woring"
+            ],422);
+        }
         if($family){
             $family->delete();
             return response()->json([
