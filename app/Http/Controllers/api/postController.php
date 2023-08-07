@@ -187,16 +187,15 @@ class postController extends Controller
         $user_id=Auth::user()->id;
        // $posts = Post::find($post);
        $posts=Post::where('user_id',$user_id)->where('id',$post)->first();
-        if($Request->hasFile('image')){
-            $destination_path ='public/images/posts';  
-            $image = $Request->file('image');
-            $image_name=$image->getClientOriginalName();
-            $Request->file('image')->storeAs($destination_path,$image_name); 
-        }
+       if($Request->hasFile('image')){
+        $image = $Request->file('image');
+        $imageName=$image->getClientOriginalName();
+        $imagedb=$Request->file('image')->Move('posts',$imageName); 
+    }
         $posts->update([
             'content'=> $Request->content,
             //$Request->except('image'),
-            'image'=>$image_name
+            'image'=>$imagedb
         ]);
         if($posts){
             return response()->json([
@@ -212,8 +211,9 @@ class postController extends Controller
     
     }
     public function destroy($post){
+        $user_id=Auth::user()->id;
         //$posts = Post::find($post);
-        $posts=Post::with('users')->where('id',$post)->first();
+        $posts=Post::where('user_id',$user_id)->where('id',$post)->first();
         if($posts){
             $posts->delete();
             return response()->json([
